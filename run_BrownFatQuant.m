@@ -68,26 +68,26 @@ t2starimg = reshape(t2star.img,[1 numel(t2star.img)]);
 map2         = find(t2starimg>44);% scnh
 t2starimg(map2) = 0; % scnh
 ffimg(map2) = 0; % scnh
-nonZeroIndexes = t2starimg ~= 0;  % m is your row vector array of numbers.
-Meant2star = mean(t2starimg(nonZeroIndexes));
-t2starimg(map2) =Meant2star;
-nonZeroIndexes = ffimg ~= 0;  % m is your row vector array of numbers.
-Meanff = mean(ffimg(nonZeroIndexes));
-ffimg(map2) =Meanff;
-% end
+nonZeroIndexes1 = t2starimg ~= 0;  % m is your row vector array of numbers.
+Meant2star = mean(t2starimg(nonZeroIndexes1));
+%t2starimg(map2) =Meant2star;
+nonZeroIndexes2 = ffimg ~= 0;  % m is your row vector array of numbers.
+Meanff = mean(ffimg(nonZeroIndexes2));
+%ffimg(map2) =Meanff;
+% end of correction
 
 data = [ffimg;t2starimg];
 
-k = 3; % predefined as 4 (important parameter)
-%GMModel = fitgmdist(X,2);
+k = 4; % predefined as 4 (important parameter)
+% GMModel = fitgmdist(X,4);
 emresult = emgm(data,k); % emgm function,(data,k), k = num of clusters
 em = reshape(emresult,size(ff.img));
 cluster.img = em;
 save_untouch_nii(cluster, [path 'cluster.nii']);
 
-data( all( ~any( data), 2 ), : ) = []; % removes all rows with all zero
-data( :, all( ~any( data ), 1 ) ) = []; % and columns
-gkde2(data) % Bivariate Kernel Density Estimation to plot 3D histogram
+% data( all( ~any( data), 2 ), : ) = []; % removes all rows with all zero
+% data( :, all( ~any( data ), 1 ) ) = []; % and columns
+% gkde2(data) % Bivariate Kernel Density Estimation to plot 3D histogram
 
 %% Separate emgm clusters
 
@@ -115,11 +115,12 @@ for c = 1:k
     
 end
 
-t2starMean
-ffMean
+%t2starMean
+%ffMean
 
+% Reference values obtained from "Hu HH et al. JMRI 2013 Reson Imaging. 2013 PMID: 23440739"
 t2starExpectation=17.9;
-ffExpectation=50;%72.1;
+ffExpectation= 50;%72.1;
 differences=[];
 for c=1:k
     differences=[differences,norm([t2starExpectation,ffExpectation]-[t2starMean(c),ffMean(c)],2)];
@@ -130,15 +131,7 @@ end
 cluster.img(find(cluster.img~=I))=0.0;
 cluster.img(find(cluster.img==I))=1.0;
 BATmask.img = reshape(cluster.img,size(fat.img)); % return to 3D volume
-save_untouch_nii(BATmask, [path 'BATmask-before.nii']);
-
-%% Dilation to remove partial volume effect (PVE)
-
-% BATmaskimg  = reshape(BATmask.img,[size(BATmask.img,1) size(BATmask.img,2)*size(BATmask.img,3)]);
-% se = strel('disk',1);
-% BATmaskimg2 = imopen(BATmaskimg,se);
-% BATreshape = reshape(BATmaskimg2,[size(BATmask.img,1) size(BATmask.img,2) size(BATmask.img,3)]);
-% BATmask.img = BATreshape;
+%save_untouch_nii(BATmask, [path 'BATmask-before.nii']);
 
 BATmaskff.img = BATmask.img.*ff.img;
 BATmaskt2star.img = BATmask.img.*t2star.img;
@@ -168,7 +161,6 @@ disp(['BAT Mean T2* = ' num2str(BATt2starMean) ' ms']);
 % calculate BAT volume
 vol_weight = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(BATmask.img)));
 disp(['BAT volume = ' num2str(vol_weight) ' mL']);
-%BATt2star(length(BATt2star)+1) = vol_weight;
 
 % Get mean FF and T2* of WAT
 WATffMean = mean(WATmaskff.img(WATmaskff.img~=0));
@@ -179,6 +171,5 @@ disp(['WAT Mean T2* = ' num2str(WATt2starMean) ' ms']);
 % calculate WAT volume
 vol_weight = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(WATmask.img)));
 disp(['WAT volume = ' num2str(vol_weight) ' mL']);
-%WATt2star(length(BATt2star)+1) = vol_weight;
 
-toc;
+toc
