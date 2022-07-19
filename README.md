@@ -12,7 +12,7 @@ BrownFatQuant supports segmentation and quantification of BAT and WAT using Gaus
 
 Usage:
 1) Convert DICOM images to NIFIT (.nii) images.
-2) Rename the NIFIT images of water, fat, fat-fraction and T2* to 1-water.nii, 1-fat.nii, 1-ff.nii and 1-t2star.nii.
+2) Rename the NIFIT images of water, fat, fat-fraction and T2* to 1-water.nii, 1-fat.nii, 1-ff.nii and 1-t2star.nii respectively.
 3) Replace the path of the code and data in run_Brown_Fat_Quant.m to your own path.
 4) Run the run_BrownFatQuant.m script (run time varies as the EM algorithm iterating data to fit the mixture model). 
 5) Fat-fraction, T2* and volume of BAT and WAT will be reported at the end of the Command window.
