@@ -8,7 +8,7 @@ BrownFatQuant is written in MATLAB to segment and quantify brown adipose tissue 
 Source code is published on Github https://github.com/shui5/BrownFatQuant
 
 Features:
-BrownFatQuant supports segmentation and quantification of BAT and WAT using Gaussian Mixture Model. It fits fat-fraction and T2* signals into the mixture model using expectation–maximization (EM) algorithm by iterating the local maximum likelihood  of them into BAT and WAT. This program requires input of water, fat, fat-fraction and T2* images acquired using the mDixon sequence in Philips or equivalent sequences from other vendors.
+BrownFatQuant supports segmentation and quantification of BAT and WAT using Gaussian Mixture Model. It fits fat-fraction and T2* signals into a mixture model using the expectation–maximization (EM) algorithm by iterating the local maximum likelihood  of them into BAT and WAT. This program requires input of water, fat, fat-fraction and T2* images acquired using the mDixon sequence in Philips or equivalent sequences from other vendors.
 
 Usage:
 1) Convert DICOM images to NIFIT (.nii) images.
