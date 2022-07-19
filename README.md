@@ -24,6 +24,7 @@ The functions folder includes the NIFTI toolbox (https://www.mathworks.com/matla
 For any questions, feedback, suggestions, or critique, please contact Steve Hui <stevehui@jhu.edu>
 
 Should you publish material that made use of BrownFatQuant, please cite the following publication:
+
 Hui SCN, Ko JKL, Zhang T, Shi L, Yeung DKW, Wang D, Chan Q, Chu WCW. Quantification of brown and white adipose tissue based on Gaussian mixture model using water-fat and T2* MRI in adolescents. J Magn Reson Imaging. 2017 Sep;46(3):758-768. doi: 10.1002/jmri.25632. Epub 2017 Jan 16. PMID: 28092409.
 
 Acknowledgements:
