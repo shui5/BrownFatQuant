@@ -1,3 +1,5 @@
 misc_1
 misc_2
 sample-data
+*.txt
+*.mat

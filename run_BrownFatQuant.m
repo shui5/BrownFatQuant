@@ -3,8 +3,8 @@
 % The Chinese University of Hong Kong
 %% Start BAT WAT Measurement
 close all
-clear
-clc
+%clear
+%clc
 tic;
 
 % use "\" for Windows, "/" for MacOS
@@ -26,20 +26,20 @@ t2star.img  = double(t2star.img);
 
 %% Image preprocessing
 
-% Rician noise estimation and denosing
-verbose     = 0;
-rician      = 1;
-beta        = 1;
-[hfinal, ho, SNRo, hbg, SNRbg] = MRINoiseEstimation(ff.img, rician, verbose);
-verbose     = 1;
-ff.img      = MRIDenoisingPRINLM(ff.img, hfinal, beta, rician, verbose);
-
-verbose     = 0;
-rician      = 1;
-beta        = 1;
-[hfinal, ho, SNRo, hbg, SNRbg] = MRINoiseEstimation(t2star.img, rician, verbose);
-verbose     = 1;
-t2star.img  = MRIDenoisingPRINLM(t2star.img, hfinal, beta, rician, verbose);
+% % Rician noise estimation and denosing
+% verbose     = 0;
+% rician      = 1;
+% beta        = 1;
+% [hfinal, ho, SNRo, hbg, SNRbg] = MRINoiseEstimation(ff.img, rician, verbose);
+% verbose     = 1;
+% ff.img      = MRIDenoisingPRINLM(ff.img, hfinal, beta, rician, verbose);
+% 
+% verbose     = 0;
+% rician      = 1;
+% beta        = 1;
+% [hfinal, ho, SNRo, hbg, SNRbg] = MRINoiseEstimation(t2star.img, rician, verbose);
+% verbose     = 1;
+% t2star.img  = MRIDenoisingPRINLM(t2star.img, hfinal, beta, rician, verbose);
 
 %% Create binaries to generate T2* and FF only images
  
@@ -80,14 +80,14 @@ data = [ffimg;t2starimg];
 
 k = 4; % predefined as 4 (important parameter)
 % GMModel = fitgmdist(X,4);
-emresult = emgm(data,k); % emgm function,(data,k), k = num of clusters
+%emresult = emgm(data,k); % emgm function,(data,k), k = num of clusters
 em = reshape(emresult,size(ff.img));
 cluster.img = em;
 save_untouch_nii(cluster, [path 'cluster.nii']);
 
-% data( all( ~any( data), 2 ), : ) = []; % removes all rows with all zero
-% data( :, all( ~any( data ), 1 ) ) = []; % and columns
-% gkde2(data) % Bivariate Kernel Density Estimation to plot 3D histogram
+data( all( ~any( data), 2 ), : ) = []; % removes all rows with all zero
+data( :, all( ~any( data ), 1 ) ) = []; % and columns
+gkde2(data) % Bivariate Kernel Density Estimation to plot 3D histogram
 
 %% Separate emgm clusters
 
@@ -159,8 +159,8 @@ disp(['BAT Mean FF = ' num2str(BATffMean) ' %']);
 disp(['BAT Mean T2* = ' num2str(BATt2starMean) ' ms']);
 
 % calculate BAT volume
-vol_weight = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(BATmask.img)));
-disp(['BAT volume = ' num2str(vol_weight) ' mL']);
+vol_weight_BAT = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(BATmask.img)));
+disp(['BAT volume = ' num2str(vol_weight_BAT) ' mL']);
 
 % Get mean FF and T2* of WAT
 WATffMean = mean(WATmaskff.img(WATmaskff.img~=0));
@@ -169,7 +169,24 @@ disp(['WAT Mean FF = ' num2str(WATffMean) ' %']);
 disp(['WAT Mean T2* = ' num2str(WATt2starMean) ' ms']);
 
 % calculate WAT volume
-vol_weight = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(WATmask.img)));
-disp(['WAT volume = ' num2str(vol_weight) ' mL']);
+vol_weight_WAT = pix_dim(1)*pix_dim(2)*pix_dim(3)/1000*sum(sum(sum(WATmask.img)));
+disp(['WAT volume = ' num2str(vol_weight_WAT) ' mL']);
+
+% save results into a table in .txt
+Description     = {'BAT ff';'BAT T2*';'BAT vol.';'WAT ff';'WAT T2*';'WAT vol.'};
+BATffMean       = round(BATffMean,2);
+BATt2starMean   = round(BATt2starMean,2);
+vol_weight_BAT  = round(vol_weight_BAT,2);
+WATffMean       = round(WATffMean,2);
+WATt2starMean   = round(WATt2starMean,2);
+vol_weight_WAT  = round(vol_weight_WAT,2);
+Mean            = [BATffMean;BATt2starMean;vol_weight_BAT;WATffMean;WATt2starMean;vol_weight_WAT];
+Unit            = {'%';'ms';'mL';'%';'ms';'mL'};
+T               = table(Description,Mean,Unit);
+t1              = datetime('now');
+DateString      = datestr( t1 ) ;
+filename        = ['tabledata' '_' DateString '.txt'];
+writetable(T,filename);
+%type tabledata.txt;
 
 toc
